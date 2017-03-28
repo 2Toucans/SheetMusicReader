@@ -8,5 +8,7 @@
 	<classpathentry kind="lib" path="lib/jlapack-0.8/lapack_simple.jar"/>
 	<classpathentry kind="lib" path="lib/jlapack-0.8/lapack.jar"/>
 	<classpathentry kind="lib" path="lib/jlapack-0.8/xerbla.jar"/>
+	<classpathentry kind="lib" path="lib/colt.jar"/>
+	<classpathentry kind="lib" path="lib/concurrent.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
