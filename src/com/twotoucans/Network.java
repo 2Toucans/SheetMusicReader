@@ -45,16 +45,14 @@ public class Network
     }
     
     //Mini batch will be an array of input/outputs [FIX LATER]
-    public void update_mini_batch(int[] mini_batch, int eta)
+    public void update_mini_batch(TestEntry[] mini_batch, int eta)
     {
         /*Update the network's weights and biases by applying
         gradient descent using backpropagation to a single mini batch.
         The "mini_batch" is a list of tuples "(x, y)", and "eta"
         is the learning rate.*/
         
-        /*nabla_b = [np.zeros(b.shape) for b in self.biases]
-        nabla_w = [np.zeros(w.shape) for w in self.weights]
-        for x, y in mini_batch:
+        /*for x, y in mini_batch:
             delta_nabla_b, delta_nabla_w = self.backprop(x, y)
             nabla_b = [nb+dnb for nb, dnb in zip(nabla_b, delta_nabla_b)]
             nabla_w = [nw+dnw for nw, dnw in zip(nabla_w, delta_nabla_w)]
@@ -63,9 +61,23 @@ public class Network
         self.biases = [b-(eta/len(mini_batch))*nb 
                        for b, nb in zip(self.biases, nabla_b)]*/
         
-        
         double[][] nabla_b = new double[biases.length][biases[0].length];
         double[][] nabla_w = new double[weights.length][weights[0].length];
         
+        for(TestEntry entry : mini_batch)
+        {
+            double[] gradientTup = backProp(entry.getImg(), entry.getValue());
+        }
+        
+    }
+    
+    //Will return a tuple representing the gradient for cost functions
+    //AKA nabla_b and nabla_w
+    public double[] backProp(double x, double y)
+    {
+        double[] hi = new double[2];
+        hi[0] = 1;
+        hi[1] = 1;
+        return hi;
     }
 }
