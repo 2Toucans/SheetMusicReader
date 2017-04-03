@@ -37,6 +37,25 @@ public class Network
         }
     }
     
+    public DoubleMatrix1D feedforward(DoubleMatrix1D a) {
+    	/*
+    	def feedforward(self, a):
+        """Return the output of the network if ``a`` is input."""
+        for b, w in zip(self.biases, self.weights):
+            a = sigmoid(np.dot(w, a)+b)
+        return a
+    	 */
+    	DoubleMatrix1D result = a;
+    	for (int i = 0; i < numLayers - 1; i++)
+    	{
+    		result = weights[i].zMult(result, null)
+    				.assign(biases[i], Functions.plus);
+    				//.assign(Sigmoid.sigmoid);
+    	}
+    	return result;
+	}
+    
+    //Mini batch will be an array of input/outputs [FIX LATER]
     public void update_mini_batch(TestEntry[] mini_batch, int eta)
     {
         /*Update the network's weights and biases by applying
@@ -63,7 +82,7 @@ public class Network
         
         for(TestEntry entry : mini_batch)
         {
-            double[] deltaNablas = backProp(entry.getImg(), entry.getValue());
+            DoubleMatrix2D[] deltaNablas = backProp(entry.getImg(), entry.getValue());
             //FIGURE OUT BACK PROP FIRST THEN COME BACK HERE
         }
         
@@ -111,6 +130,6 @@ public class Network
         
         int[][] activations = new int[biases.length+1][x.length];
         
-        
+        return new DoubleMatrix2D[1];
     }
 }
