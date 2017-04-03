@@ -1,15 +1,23 @@
 package com.twotoucans;
 
+import cern.colt.function.*;
+
 public final class Sigmoid
 {
 	private Sigmoid() {}
-	public static double sigmoid(double z)
+	public static DoubleFunction sigmoid = new DoubleFunction()
 	{
-		return 1.0 / (1.0 + Math.exp(z));
-	}
+		public final double apply(double z)
+		{
+			return 1.0 / (1.0 + Math.exp(z));
+		}
+	};
 	
-	public static double sigPrime(double z)
+	public static DoubleFunction sigPrime = new DoubleFunction()
 	{
-		return sigmoid(z) * (1 - sigmoid(z));
-	}
+		public final double apply(double z)
+		{
+			return sigmoid.apply(z) * (1 - sigmoid.apply(z));
+		}
+	};
 }
