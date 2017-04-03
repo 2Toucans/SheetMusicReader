@@ -37,6 +37,24 @@ public class Network
         }
     }
     
+    public DoubleMatrix1D feedforward(DoubleMatrix1D a) {
+    	/*
+    	def feedforward(self, a):
+        """Return the output of the network if ``a`` is input."""
+        for b, w in zip(self.biases, self.weights):
+            a = sigmoid(np.dot(w, a)+b)
+        return a
+    	 */
+    	DoubleMatrix1D result = a;
+    	for (int i = 0; i < numLayers - 1; i++)
+    	{
+    		result = weights[i].zMult(result, null)
+    				.assign(biases[i], Functions.plus);
+    				//.assign(Sigmoid.sigmoid);
+    	}
+    	return result;
+	}
+    
     //Mini batch will be an array of input/outputs [FIX LATER]
     public void update_mini_batch(int[] mini_batch, int eta)
     {
