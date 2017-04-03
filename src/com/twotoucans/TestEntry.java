@@ -2,15 +2,16 @@ package com.twotoucans;
 
 public class TestEntry
 {
-    private int image, value;
+    private int[] image;
+    private int value;
     
-    public TestEntry(int i, int v)
+    public TestEntry(int[] i, int v)
     {
         image = i;
         value = v;
     }
     
-    public int getImg()
+    public int[] getImg()
     {
         return image;
     }
