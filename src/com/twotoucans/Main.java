@@ -7,11 +7,9 @@ public class Main
 {
 	public static void main(String[] args)
 	{
-		int[] layers = {1, 2, 1};
-		double[] inputs = {0.5};
-		DoubleMatrix1D input = DoubleFactory1D.dense.make(inputs);
+		int[] layers = {728, 30, 10};
 		Network n = new Network(layers);
 
-    	System.out.println("Output: " + n.feedforward(input));
+    	n.SGD(training_data, epochs, mini_batch_size, eta, test_data);
 	}
 }
