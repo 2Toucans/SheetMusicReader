@@ -26,7 +26,7 @@ public class TestData {
 			double[] imageDec = new double[img.length * img[0].length];
 			for (int x = 0; x < img.length; x++)
 			{
-				for (int y = 0; y < img[y].length; y++)
+				for (int y = 0; y < img[i].length; y++)
 				{
 					imageDec[x*img.length + y] = (double)img[x][y] / 256;
 				}
@@ -34,5 +34,10 @@ public class TestData {
 			DoubleMatrix1D inputValues = DoubleFactory1D.dense.make(imageDec);
 			tests[i] = new TestEntry(inputValues, labels[i], outputLayerSize);
 		}
+	}
+	
+	public TestEntry[] getData()
+	{
+	    return tests;
 	}
 }
