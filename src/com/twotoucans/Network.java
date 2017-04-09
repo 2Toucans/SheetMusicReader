@@ -213,7 +213,7 @@ public class Network
         {
             z = zs[i];
             DoubleMatrix1D sp = z.assign(Sigmoid.sigPrime);
-            delta = myAlg.transpose(weights[i+1]).zMult(delta.like2D(delta.size(), 1), null)
+            delta = myAlg.transpose(weights[i]).zMult(delta.like2D(delta.size(), 1), null)
                     .assign(sp.like2D(1, sp.size()), Functions.mult).viewColumn(0);
             nabla_b[i] = delta.like2D(delta.size(), 1);
             nabla_w[i] = delta.like2D(delta.size(), 1)
