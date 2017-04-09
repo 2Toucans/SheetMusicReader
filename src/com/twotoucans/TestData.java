@@ -26,7 +26,7 @@ public class TestData {
 			double[] imageDec = new double[img.length * img[0].length];
 			for (int x = 0; x < img.length; x++)
 			{
-				for (int y = 0; y < img[i].length; y++)
+				for (int y = 0; y < img[x].length; y++)
 				{
 					imageDec[x*img.length + y] = (double)img[x][y] / 256;
 				}
