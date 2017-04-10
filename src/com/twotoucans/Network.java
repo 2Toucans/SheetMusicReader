@@ -66,7 +66,7 @@ public class Network
     epoch, and partial progress printed out.  This is useful for
     tracking progress, but slows things down substantially.*/
     public void SGD(TestEntry[] training_data, int epochs,
-            int mini_batch_size, int eta, TestEntry[] test_data)
+            int mini_batch_size, double eta, TestEntry[] test_data)
     {
         int n_test = 0;
         
@@ -106,7 +106,7 @@ public class Network
      * The "mini_batch" is a list of tuples "(x, y)", and "eta"
      * is the learning rate.
      */
-    public void update_mini_batch(TestEntry[] mini_batch, int eta)
+    public void update_mini_batch(TestEntry[] mini_batch, double eta)
     {
         DoubleMatrix1D[] nabla_b = new DoubleMatrix1D[biases.length];
         DoubleMatrix2D[] nabla_w = new DoubleMatrix2D[weights.length];
@@ -200,24 +200,32 @@ public class Network
         //delta = cost derivative * sigmoid prime of the last z vector
         DoubleMatrix1D delta = costDeriv.assign(zs[zs.length-1].assign(Sigmoid.sigPrime), Functions.mult);
         
+        Algebra myAlg = new Algebra();//Used for transposing
+        
+        //The factory calls basically just turn delta into a 2D matrix
         //set last set of biases to that delta
-        nabla_b[nabla_b.length-1] = delta.like2D(delta.size(), 1);
+        nabla_b[nabla_b.length-1] = DoubleFactory2D.dense.make(delta.toArray(), delta.size());
         //set last set of weights to 
-        nabla_w[nabla_w.length-1] = delta.like2D(delta.size(), 1)
-                .zMult(activations[activations.length-2]
-                        .like2D(1, activations[activations.length-2].size()), null);
+        DoubleMatrix2D act2D = DoubleFactory2D.dense.make(activations[activations.length-2].toArray(),
+                activations[activations.length-2].size());
+        act2D = myAlg.transpose(act2D);
+        nabla_w[nabla_w.length-1] = DoubleFactory2D.dense.make(delta.toArray(), delta.size()).zMult(act2D, null);
         
-        Algebra myAlg = new Algebra();
-        
-        for(int i = 1; i < numLayers; i++)
+        for(int i = 2; i < numLayers; i++)
         {
-            z = zs[i];
+            z = zs[zs.length-i];
             DoubleMatrix1D sp = z.assign(Sigmoid.sigPrime);
-            delta = myAlg.transpose(weights[i]).zMult(delta.like2D(delta.size(), 1), null)
-                    .assign(sp.like2D(1, sp.size()), Functions.mult).viewColumn(0);
-            nabla_b[i] = delta.like2D(delta.size(), 1);
-            nabla_w[i] = delta.like2D(delta.size(), 1)
-                    .zMult(activations[i-1].like2D(1, activations[i-1].size()), null);
+            
+            //The factory calls basically just turn the 1D matrices to 2Ds
+            delta = myAlg.transpose(weights[weights.length-i+1]).zMult(DoubleFactory2D.dense.make(delta.toArray(), delta.size()), null)
+                    .assign(DoubleFactory2D.dense.make(sp.toArray(), sp.size()), Functions.mult).viewColumn(0);
+            
+            act2D = DoubleFactory2D.dense.make(activations[activations.length-i-1].toArray(),
+                    activations[activations.length-i-1].size());
+            act2D = myAlg.transpose(act2D);//transpose for use in nabla_w
+            
+            nabla_b[nabla_b.length-i] = DoubleFactory2D.dense.make(delta.toArray(), delta.size());
+            nabla_w[nabla_w.length-i] = DoubleFactory2D.dense.make(delta.toArray(), delta.size()).zMult(act2D, null);
         }
         
         DoubleMatrix2D[][] nablas = new DoubleMatrix2D[2][nabla_b.length];
@@ -233,14 +241,13 @@ public class Network
         
         for(int i = 0; i < test_data.length; i++)
         {
-            //np.argmax(feedforward(test_data[i].getImg()), test_data[i].getValue())
             //Get the highest output value (which number it thinks the img is)
             DoubleMatrix1D feed_results = feedforward(test_data[i].getImg());
-            double max = feed_results.get(0);
+            double max = 0;
             for(int f = 1; f < feed_results.size(); f++)
             {
                 if(feed_results.get(f) > max)
-                    max = feed_results.get(f);
+                    max = f;
             }
             
             eval_sum += max == test_data[i].getNum() ? 1 : 0;
@@ -252,7 +259,10 @@ public class Network
     public DoubleMatrix1D cost_derivative(DoubleMatrix1D output_activations, DoubleMatrix1D y)
     {
         //A really stupid way of making a copy of output_activations
-        DoubleMatrix1D tempAct = output_activations.like2D(output_activations.size(), 1).viewColumn(0);
+
+        DoubleMatrix1D[] tempthing = new DoubleMatrix1D[1];
+        tempthing[0] = output_activations;
+        DoubleMatrix1D tempAct = DoubleFactory1D.dense.make(tempthing);
         //Return output_activations - y
         return tempAct.assign(y, Functions.minus);
     }
