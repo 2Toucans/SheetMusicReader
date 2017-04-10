@@ -9,7 +9,7 @@ public final class Sigmoid
 	{
 		public final double apply(double z)
 		{
-			return 1.0 / (1.0 + Math.exp(z));
+			return 1.0 / (1.0 + Math.exp(-z));
 		}
 	};
 	

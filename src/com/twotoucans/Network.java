@@ -91,6 +91,7 @@ public class Network
                 }
                 
                 update_mini_batch(mini_batches[k], eta);
+                System.out.println("Mini batch " + k/mini_batch_size + ": " + evaluate(test_data) + " / " + n_test);
             }
             
             if (test_data != null)
@@ -243,10 +244,10 @@ public class Network
         {
             //Get the highest output value (which number it thinks the img is)
             DoubleMatrix1D feed_results = feedforward(test_data[i].getImg());
-            double max = 0;
+            int max = 0;
             for(int f = 1; f < feed_results.size(); f++)
             {
-                if(feed_results.get(f) > max)
+                if(feed_results.get(f) > feed_results.get(max))
                     max = f;
             }
             
