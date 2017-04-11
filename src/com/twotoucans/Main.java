@@ -1,10 +1,19 @@
 package com.twotoucans;
 
+import java.awt.Dimension;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+
 public class Main
 {
 	public static void main(String[] args)
 	{
-		int[] layers = {784, 100, 10};
+		GUI g = new GUI();
+		g.setPreferredSize(new Dimension(640, 480));
+		g.pack();
+		g.setVisible(true);
+		
+		int[] layers = {784, 40, 10};
 		Network n = new Network(layers);
 		TestData training = new TestData(layers[layers.length-1]);
 		training.readFromFiles("./data/train-labels.idx1-ubyte", "./data/train-images.idx3-ubyte");

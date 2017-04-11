@@ -1,5 +1,11 @@
 package com.twotoucans;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -33,10 +39,42 @@ public class Network
         	
         	biases[i].assign(gaussGen);
         	weights[i].assign(gaussGen);
-        	
-        	System.out.println(biases[i]);
-        	System.out.println(weights[i]);
         }
+    }
+    
+    public Network(InputStream is) throws IOException {
+    	DataInputStream dis = new DataInputStream(is);
+    	try {
+	    	byte[] ntwk = new byte[4];
+	    	dis.read(ntwk, 0, 4);
+	    	if (!Arrays.equals(ntwk, "NTWK".getBytes(StandardCharsets.UTF_8))) {
+	    		throw new IOException(".nwtk file was expected");
+	    	}
+	    	numLayers = dis.readInt();
+	    	sizes = new int[numLayers];
+	
+	    	for (int i = 0; i < numLayers; i++) {
+	    		sizes[i] = dis.readInt();
+	    	}
+	    	biases = new DoubleMatrix1D[numLayers];
+	    	weights = new DoubleMatrix2D[numLayers];
+	    	for (int i = 0; i < numLayers - 1; i++) {
+	    		double[] b = new double[sizes[i+1]];
+	    		double[][] w = new double[sizes[i+1]][];
+				for (int j = 0; j < sizes[i+1]; j++) {
+					b[j] = dis.readDouble();
+					w[j] = new double[sizes[i]];
+					for (int x = 0; x < sizes[i]; x++) {
+						w[j][x] = dis.readDouble();
+					}
+				}
+				biases[i] = DoubleFactory1D.dense.make(b);
+				weights[i] = DoubleFactory2D.dense.make(w);
+			}
+    	}
+    	catch (IOException e) {
+    		throw e;
+    	}
     }
     
     public DoubleMatrix1D feedforward(DoubleMatrix1D a) {
@@ -266,5 +304,53 @@ public class Network
         DoubleMatrix1D tempAct = DoubleFactory1D.dense.make(tempthing);
         //Return output_activations - y
         return tempAct.assign(y, Functions.minus);
+    }
+    
+    public void write(OutputStream os) {
+    	try {
+    		DataOutputStream dos = new DataOutputStream(os);
+    		dos.write("NTWK".getBytes(StandardCharsets.UTF_8)); // First word: characters for "NTWK"
+    		dos.writeInt(numLayers);							   // Second word: num of layers
+    		// Next [numLayers] words: Layer sizes
+    		for (int i = 0; i < numLayers; i++) {
+    			dos.writeInt(sizes[i]);
+    		}
+    		// Next chunks: Layer 1 ... layer [numLayers - 1]
+    		// Chunk contains: Bias of node, Weights of node, for each node
+    		for (int i = 0; i < numLayers - 1; i++) {
+    			for (int j = 0; j < sizes[i+1]; j++) {
+    				dos.writeDouble(biases[i].get(j));
+    				for (int x = 0; x < sizes[i]; x++) {
+    					dos.writeDouble(weights[i].get(j, x));
+    				}
+    			}
+    		}
+    	}
+    	catch(Exception e) {
+    		System.err.println("Error: " + e.getMessage());
+    	}
+    }
+    public DoubleMatrix1D[] getBiases() {
+		return biases;
+    }
+    public DoubleMatrix2D[] getWeights() {
+    	return weights;
+    }
+    public String toString() {
+    	String br =  System.lineSeparator();
+    	String s = "";
+    	for (int i = 1; i < numLayers; i++) {
+    		s += "====Layer " + i + "====" + br;
+    		for (int j = 0; j < sizes[i]; j++) {
+    			s += "  --Node " + j + "--  " + br;
+    			s += "Bias: " + biases[i - 1].get(j) + br;
+    			for (int x = 0; x < sizes[i - 1]; x++) {
+    				s += "" + (i - 1) + "[" + x + "] --> " + i + "[" + j + "]: " + weights[i - 1].get(j, x) + br; 
+    			}
+    			s += br;
+    		}
+    		s += br;
+    	}
+    	return s;
     }
 }
