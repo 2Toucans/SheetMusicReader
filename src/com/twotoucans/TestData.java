@@ -5,7 +5,8 @@ import cern.colt.matrix.DoubleFactory1D;
 import cern.colt.matrix.DoubleMatrix1D;
 import mnist.MnistReader;
 
-public class TestData {
+public class TestData
+{
 	public TestEntry[] tests;
 	private int outputLayerSize;
 	

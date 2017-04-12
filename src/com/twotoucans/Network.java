@@ -81,17 +81,16 @@ public class Network
             
             Collections.shuffle(shuffData);
             
-            TestEntry[][] mini_batches = new TestEntry[n][mini_batch_size];
+            TestEntry[][] mini_batches = new TestEntry[n/mini_batch_size][mini_batch_size];
             
-            for(int k = 0; k < n; k += mini_batch_size)
+            for(int k = 0; k < mini_batches.length; k++)
             {
                 for(int m = 0; m < mini_batch_size; m++)
                 {
-                    mini_batches[k][m] = training_data[k+m];
+                    mini_batches[k][m] = shuffData.get((k*mini_batch_size)+m);
                 }
                 
                 update_mini_batch(mini_batches[k], eta);
-                System.out.println("Mini batch " + k/mini_batch_size + ": " + evaluate(test_data) + " / " + n_test);
             }
             
             if (test_data != null)
@@ -140,17 +139,17 @@ public class Network
                 {
                     for(int k = 0; k < nabla_w[i].columns(); k++)
                     {
-                        nabla_w[i].set(j, k, nabla_w[i].get(j, k)*learnAmt);
+                        nabla_w[i].setQuick(j, k, nabla_w[i].getQuick(j, k)*learnAmt);
                     }
                 }
                 
                 for(int j = 0; j < nabla_b[i].size(); j++)
                 {
-                    nabla_b[i].set(j, nabla_b[i].get(j)*learnAmt);
+                    nabla_b[i].setQuick(j, nabla_b[i].getQuick(j)*learnAmt);
                 }
                 
-                weights[i] = weights[i].assign(nabla_w[i], Functions.minus);
-                biases[i] = biases[i].assign(nabla_b[i], Functions.minus);
+                weights[i].assign(nabla_w[i], Functions.minus);
+                biases[i].assign(nabla_b[i], Functions.minus);
             }
         }
         
@@ -247,7 +246,7 @@ public class Network
             int max = 0;
             for(int f = 1; f < feed_results.size(); f++)
             {
-                if(feed_results.get(f) > feed_results.get(max))
+                if(feed_results.getQuick(f) > feed_results.getQuick(max))
                     max = f;
             }
             
