@@ -56,6 +56,7 @@ public class NetworkController {
 			}
 			n = new Network(sizes);
 			n.setConsole(gui.getConsole());
+			gui.getConsole().println("Created network");
 		}
 	}
 	
@@ -68,6 +69,7 @@ public class NetworkController {
 				fis = new FileInputStream(file.getPath());
 				n = new Network(fis);
 				n.setConsole(gui.getConsole());
+				gui.getConsole().println("Loaded network");
 			}
 			catch (IOException e) {
 				gui.getConsole().println("ERROR: " + e.getMessage());
@@ -94,6 +96,7 @@ public class NetworkController {
 				try {
 					fos = new FileOutputStream(file.getPath());
 					n.write(fos);
+					gui.getConsole().println("Saved network");
 				}
 				catch (IOException e) {
 					gui.getConsole().println("ERROR: " + e.getMessage());
@@ -116,16 +119,18 @@ public class NetworkController {
 		if (n != null && training != null) {
 			Runnable r = new Runnable() {
 				public void run() {
-			    	n.SGD(training.getData(), 30, 10, 3.0, training.getData());
+			    	n.SGD(training.getData(), 30, 10, 3.0, testing.getData());
 				}
 			};
 			Thread t = new Thread(r, "NetworkSGD");
 			t.start();
+			gui.getConsole().println("Started network training...");
 		}
 	}
 	
 	public void onStop() {
 		n.stop();
+		gui.getConsole().println("Halted training");
 	}
 	
 	private TestData dataLoad() {
