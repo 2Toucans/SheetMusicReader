@@ -39,14 +39,8 @@ public class Network
         }
     }
     
-    public DoubleMatrix1D feedforward(DoubleMatrix1D a) {
-    	/*
-    	def feedforward(self, a):
-        """Return the output of the network if ``a`` is input."""
-        for b, w in zip(self.biases, self.weights):
-            a = sigmoid(np.dot(w, a)+b)
-        return a
-    	 */
+    public DoubleMatrix1D feedforward(DoubleMatrix1D a)
+    {
     	DoubleMatrix1D result = a;
     	for (int i = 0; i < numLayers - 1; i++)
     	{
@@ -177,8 +171,8 @@ public class Network
         //array of z vectors for each layer
         DoubleMatrix1D[] zs = new DoubleMatrix1D[biases.length];
         //sets the first layer of activations to the pixel values
-        activations[0] = x;
-        DoubleMatrix1D activation = x;
+        activations[0] = x.copy();
+        DoubleMatrix1D activation = x.copy();
         DoubleMatrix1D z;
         
         //feed forward
@@ -188,7 +182,7 @@ public class Network
             z = weights[i].zMult(activation, null)
                     .assign(biases[i], Functions.plus);
             //add result to array of z vectors
-            zs[i] = z;
+            zs[i] = z.copy();
             //set new activation for layer i to sigmoid(z)
             activation = z.assign(Sigmoid.sigmoid);
             activations[i+1] = activation;
@@ -198,7 +192,7 @@ public class Network
         //find the cost derivative of the activations and the expected results
         DoubleMatrix1D costDeriv = cost_derivative(activations[activations.length-1], y);
         //delta = cost derivative * sigmoid prime of the last z vector
-        DoubleMatrix1D delta = costDeriv.assign(zs[zs.length-1].assign(Sigmoid.sigPrime), Functions.mult);
+        DoubleMatrix1D delta = costDeriv.assign(zs[zs.length-1].copy().assign(Sigmoid.sigPrime), Functions.mult);
         
         Algebra myAlg = new Algebra();//Used for transposing
         
@@ -213,7 +207,7 @@ public class Network
         
         for(int i = 2; i < numLayers; i++)
         {
-            z = zs[zs.length-i];
+            z = zs[zs.length-i].copy();
             DoubleMatrix1D sp = z.assign(Sigmoid.sigPrime);
             
             //The factory calls basically just turn the 1D matrices to 2Ds
@@ -260,10 +254,8 @@ public class Network
     {
         //A really stupid way of making a copy of output_activations
 
-        DoubleMatrix1D[] tempthing = new DoubleMatrix1D[1];
-        tempthing[0] = output_activations;
-        DoubleMatrix1D tempAct = DoubleFactory1D.dense.make(tempthing);
+        DoubleMatrix1D tempThing = output_activations.copy();
         //Return output_activations - y
-        return tempAct.assign(y, Functions.minus);
+        return tempThing.assign(y, Functions.minus);
     }
 }
