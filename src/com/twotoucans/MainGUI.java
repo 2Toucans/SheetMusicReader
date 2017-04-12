@@ -10,31 +10,41 @@ import java.awt.event.MouseEvent;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
-public class GUI extends javax.swing.JFrame {
-	public GUI() {
+public class MainGUI extends javax.swing.JFrame {
+	private MainController controller;
+	public MainGUI() {
+		setTitle("Sheet Music Reader");
 		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 		
-		JMenu file = new JMenu("File");
-		menuBar.add(file);
+		JMenu fileMenu = new JMenu("File");
+		menuBar.add(fileMenu);
 		
-		JMenuItem analyze = new JMenuItem("Analyze");
-		file.add(analyze);
+		JMenuItem openButton = new JMenuItem("Open");
+		fileMenu.add(openButton);
 		
-		JMenu mnNetwork = new JMenu("Network");
-		menuBar.add(mnNetwork);
+		JMenu developMenu = new JMenu("Develop");
+		menuBar.add(developMenu);
 		
-		JMenuItem mntmCreate = new JMenuItem("Train");
-		mnNetwork.add(mntmCreate);
-		
-		JMenuItem mntmNewMenuItem = new JMenuItem("Stop");
-		mnNetwork.add(mntmNewMenuItem);
+		JMenuItem networkCreatorButton = new JMenuItem("Network Creator");
+		networkCreatorButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				controller.onNetworkCreatorButton();
+			}
+		});
+		developMenu.add(networkCreatorButton);
 		
 		JLabel results = new JLabel("");
 		results.setIcon(null);
 		getContentPane().add(results, BorderLayout.CENTER);
+	}
+	
+	public void setController(MainController c) {
+		controller = c;
 	}
 
 	/**

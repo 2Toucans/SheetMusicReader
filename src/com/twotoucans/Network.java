@@ -22,6 +22,9 @@ public class Network
     private int[] sizes;
     private DoubleMatrix1D[] biases;
     private DoubleMatrix2D[] weights;
+    private boolean stopTraining;
+    
+    private Console console;
     
     public Network(int[] sizes)
     {
@@ -127,15 +130,17 @@ public class Network
                 {
                     mini_batches[k][m] = training_data[k+m];
                 }
-                
+                if (stopTraining) {
+                	return;
+                }
                 update_mini_batch(mini_batches[k], eta);
-                System.out.println("Mini batch " + k/mini_batch_size + ": " + evaluate(test_data) + " / " + n_test);
+                print("Mini batch " + k/mini_batch_size + ": " + evaluate(test_data) + " / " + n_test);
             }
             
             if (test_data != null)
-                System.out.println("Epoch " + j + ": " + evaluate(test_data) + " / " + n_test);
+                print("Epoch " + j + ": " + evaluate(test_data) + " / " + n_test);
             else
-                System.out.println("Epoch " + j + " complete");
+                print("Epoch " + j + " complete");
         }
     }
     
@@ -352,5 +357,30 @@ public class Network
     		s += br;
     	}
     	return s;
+    }
+    
+    public void stop() {
+    	stopTraining = true;
+    }
+    
+    public int getLayerSize(int layer) {
+    	return sizes[layer];
+    }
+    
+    public int getNumLayers() {
+    	return numLayers;
+    }
+    
+    public void setConsole(Console c) {
+    	console = c;
+    }
+    
+    public <T> void print(T stuffToPrint) {
+    	if (console != null) {
+    		console.println(stuffToPrint);
+    	}
+    	else {
+    		System.out.println(stuffToPrint);
+    	}
     }
 }
