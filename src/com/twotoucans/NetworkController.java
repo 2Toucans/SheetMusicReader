@@ -36,7 +36,7 @@ public class NetworkController {
 				3);
 		int layers = Integer.parseInt(layerNumInput);
 		if (layers > 0) {
-			int[] sizes = {784, 40, 10};
+			int[] sizes = {2352, 40, 20};
 			if (layers != 3) {
 				sizes = new int[layers];
 			}
@@ -119,7 +119,7 @@ public class NetworkController {
 		if (n != null && training != null) {
 			Runnable r = new Runnable() {
 				public void run() {
-			    	n.SGD(training.getData(), 30, 10, 3.0, testing.getData());
+			    	n.SGD(training.getData(), 0, 10, 4.0, testing.getData());
 				}
 			};
 			Thread t = new Thread(r, "NetworkSGD");
@@ -135,7 +135,6 @@ public class NetworkController {
 	
 	private TestData dataLoad() {
 		String labelFilename = null;
-		String imageFilename = null;
 		TestData td = null;
 		if (n != null) {
 			JFileChooser jf = new JFileChooser("./data");
@@ -144,18 +143,9 @@ public class NetworkController {
 				File file = jf.getSelectedFile();
 				labelFilename = file.getPath();
 			}
-			if (labelFilename == null) {
-				return null;
-			}
-			JFileChooser jf2 = new JFileChooser("./data");
-			jf2.setDialogTitle("Please select an image file");
-			if (jf2.showSaveDialog(gui) == JFileChooser.APPROVE_OPTION) {
-				File file = jf2.getSelectedFile();
-				imageFilename = file.getPath();
-			}
-			if (labelFilename != null &&  imageFilename != null) {
+			if (labelFilename != null) {
 				td = new TestData(n.getLayerSize(n.getNumLayers() - 1));
-				td.readFromFiles(labelFilename, imageFilename);
+				td.readFromFile(labelFilename);
 				gui.getConsole().println("Loaded data.");
 			}
 		}

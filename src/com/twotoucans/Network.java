@@ -115,8 +115,7 @@ public class Network
             n_test = test_data.length;
         
         int n = training_data.length;
-        
-        for(int j = 0; j < epochs; j++)
+        for(int j = 0; (j < epochs || epochs <= 0) && !stopTraining; j++)
         {
             List<TestEntry> shuffData = Arrays.asList(training_data);
             
@@ -130,9 +129,6 @@ public class Network
                 {
                     mini_batches[k][m] = shuffData.get((k*mini_batch_size)+m);
                 }
-                if (stopTraining) {
-                	return;
-                }
                 update_mini_batch(mini_batches[k], eta);
             }
             
@@ -141,6 +137,7 @@ public class Network
             else
                 print("Epoch " + j + " complete");
         }
+        stopTraining = false;
     }
     
     /*
@@ -293,7 +290,7 @@ public class Network
                     max = f;
             }
             
-            eval_sum += max == test_data[i].getNum() ? 1 : 0;
+            eval_sum += max - 10 == test_data[i].getNote().getPosition() ? 1 : 0;
         }
         
         return eval_sum;
