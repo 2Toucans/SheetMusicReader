@@ -25,11 +25,11 @@ public class TestData
 		{
 			int[][] img = images.get(i);
 			double[] imageDec = new double[img.length * img[0].length];
-			for (int x = 0; x < img.length; x++)
+			for (int y = 0; y < img.length; y++)
 			{
-				for (int y = 0; y < img[x].length; y++)
+				for (int x = 0; x < img[y].length; x++)
 				{
-					imageDec[x*img.length + y] = (double)img[x][y] / 256;
+					imageDec[y*img[y].length + x] = (double)img[y][x] / 256;
 				}
 			}
 			DoubleMatrix1D inputValues = DoubleFactory1D.dense.make(imageDec);

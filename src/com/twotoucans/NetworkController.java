@@ -156,6 +156,7 @@ public class NetworkController {
 			if (labelFilename != null &&  imageFilename != null) {
 				td = new TestData(n.getLayerSize(n.getNumLayers() - 1));
 				td.readFromFiles(labelFilename, imageFilename);
+				gui.getConsole().println("Loaded data.");
 			}
 		}
 		else {

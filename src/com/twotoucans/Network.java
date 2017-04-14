@@ -59,8 +59,8 @@ public class Network
 	    	for (int i = 0; i < numLayers; i++) {
 	    		sizes[i] = dis.readInt();
 	    	}
-	    	biases = new DoubleMatrix1D[numLayers];
-	    	weights = new DoubleMatrix2D[numLayers];
+	    	biases = new DoubleMatrix1D[numLayers - 1];
+	    	weights = new DoubleMatrix2D[numLayers - 1];
 	    	for (int i = 0; i < numLayers - 1; i++) {
 	    		double[] b = new double[sizes[i+1]];
 	    		double[][] w = new double[sizes[i+1]][];

@@ -8,13 +8,16 @@ import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 public class MainGUI extends javax.swing.JFrame {
 	private MainController controller;
+	private JLabel results;
 	public MainGUI() {
 		setTitle("Sheet Music Reader");
 		
@@ -24,8 +27,29 @@ public class MainGUI extends javax.swing.JFrame {
 		JMenu fileMenu = new JMenu("File");
 		menuBar.add(fileMenu);
 		
-		JMenuItem openButton = new JMenuItem("Open");
-		fileMenu.add(openButton);
+		JMenuItem analyzeButton = new JMenuItem("Analyze Image");
+		analyzeButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				controller.onAnalyze();
+			}
+		});
+		
+		JMenuItem loadButton = new JMenuItem("Load Network");
+		loadButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				controller.onLoad();
+			}
+		});
+		fileMenu.add(loadButton);
+		
+		JMenuItem mntmAnalyzeMnist = new JMenuItem("Analyze MNIST");
+		mntmAnalyzeMnist.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				controller.onAnalyzeMnist();
+			}
+		});
+		fileMenu.add(mntmAnalyzeMnist);
+		fileMenu.add(analyzeButton);
 		
 		JMenu developMenu = new JMenu("Develop");
 		menuBar.add(developMenu);
@@ -38,7 +62,7 @@ public class MainGUI extends javax.swing.JFrame {
 		});
 		developMenu.add(networkCreatorButton);
 		
-		JLabel results = new JLabel("");
+		results = new JLabel("");
 		results.setIcon(null);
 		getContentPane().add(results, BorderLayout.CENTER);
 	}
@@ -68,5 +92,17 @@ public class MainGUI extends javax.swing.JFrame {
 				popup.show(e.getComponent(), e.getX(), e.getY());
 			}
 		});
+	}
+	
+	public void setResultsImage(ImageIcon i) {
+		results.setIcon(i);
+	}
+	
+	public void setResultsText(String s) {
+		results.setText(s);
+	}
+	
+	public void showPopup(String title, String message) {
+		JOptionPane.showMessageDialog(this, title, message, JOptionPane.PLAIN_MESSAGE);
 	}
 }
