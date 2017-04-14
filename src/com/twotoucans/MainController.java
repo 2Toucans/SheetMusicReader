@@ -51,12 +51,10 @@ public class MainController {
 				try {
 					fis = new FileInputStream(file.getPath());
 					BufferedImage img = ImageIO.read(file);
-					Image tmp = img.getScaledInstance(20, 20, BufferedImage.SCALE_DEFAULT);
-					BufferedImage i = new BufferedImage(28, 28, BufferedImage.TYPE_INT_RGB);
+					Image tmp = img.getScaledInstance(28, 84, BufferedImage.SCALE_SMOOTH);
+					BufferedImage i = new BufferedImage(28, 84, BufferedImage.TYPE_INT_RGB);
 					Graphics drawToImg = i.createGraphics();
-					drawToImg.setColor(Color.WHITE);
-					drawToImg.fillRect(0, 0, 28, 28);
-					drawToImg.drawImage(tmp, 4, 4, null);
+					drawToImg.drawImage(tmp, 0, 0, null);
 					drawToImg.dispose();
 					gui.setResultsImage(new ImageIcon(i));
 					gui.setResultsText("Analyzing...");
@@ -138,7 +136,7 @@ public class MainController {
 						result = i;
 					}
 				}
-				gui.setResultsText("I think the above image is a: " + result);
+				gui.setResultsText("I think the above image is a: " + Note.getNoteName(result - 10));
 			}
 		};
 		Thread t = new Thread(r);
